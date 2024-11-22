@@ -1,1 +1,10 @@
-{:deps {}}
+{:paths ["src"]
+ :deps {com.google.cloud/google-cloud-bigquery {:mvn/version "2.44.0"}
+        com.taoensso/telemere {:mvn/version "1.0.0-RC1"}
+        integrant/integrant   {:mvn/version "0.13.1"}
+        io.replikativ/hasch   {:mvn/version "0.3.94"
+                               :exclusions [org.clojure/clojurescript
+                                            com.cognitect/transit-clj
+                                            com.cognitect/transit-cljs
+                                            fress/fress]}
+        org.clojure/data.json {:mvn/version "2.5.0"}}}
