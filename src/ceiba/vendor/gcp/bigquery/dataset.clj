@@ -306,7 +306,7 @@
 (defn sync
   "syncs complete dataset via dataset/tables and dataset/properties hasching"
   [{bq            :ceiba.vendor.gcp.bigquery/client
-    ignore-cache? ::client/ignore-cache?
+    ignore-cache? :ceiba.vendor.gcp.bigquery/ignore-cache?
     project-id    :gcp/project
     location      :dataset/location
     dataset-id    :dataset/id

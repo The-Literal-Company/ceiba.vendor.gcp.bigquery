@@ -1,6 +1,6 @@
 ```clojure
 {litco/ceiba.vendor.gcp.bigquery {:git/url "https://github.com/The-Literal-Company/ceiba.vendor.gcp.bigquery.git" 
-                                  :git/sha "3ee512bb22274186ef064100798fcaca4daf04f6"}}
+                                  :git/sha ""}}
 ```
 
 <hr>
@@ -16,6 +16,7 @@
             :properties {:description "a dataset definition syntax example"
                          :labels {"labels_are" "a_place_to_store_metadata"}}
             :tables [#:table{:id "example_schemaless_table"
+                             :type :standard
                              :description "a table that can recieve json payloads from a pubsub subscription"   
                              :fields [#:field{:type :string
                                               :name "subscription_name"
@@ -31,7 +32,12 @@
                                               :mode :nullable}
                                       #:field{:type :json
                                               :name "attributes"
-                                              :mode :nullable}]}]})
+                                              :mode :nullable}]}
+                     #:table{:id "example_view"
+                             :type :view
+                             :description "a read only view created from a query"
+                             :view/sql "SELECT ..."
+                             :fields [...]}]})
                                               
 (def cfg {::bq/client {}
           [:demo/dataset ::bq/dataset] (assoc dataset ::bq/client (ig/ref ::bq/client))}

@@ -125,6 +125,7 @@
     (integer? value) StandardSQLTypeName/INT64
     (float? value) StandardSQLTypeName/FLOAT64
     (double? value) StandardSQLTypeName/FLOAT64
+    (instance? Instant value) StandardSQLTypeName/TIMESTAMP
     (instance? ZonedDateTime value) StandardSQLTypeName/TIMESTAMP
     (instance? LocalDate value) StandardSQLTypeName/DATE
     :else
@@ -136,6 +137,7 @@
     (integer? value) (str value)
     (float? value) (str value)
     (double? value) (str value)
+    (instance? Instant value) (Timestamp/from value)
     (instance? ZonedDateTime value) (Timestamp/from (.toInstant ^ZonedDateTime value))
     (and (vector? value)
          (every? string? value)) (into-array String value)
@@ -176,18 +178,6 @@
          (.setConnectionProperties query-config-builder prop-list)))
      (.query bq (.build query-config-builder) (into-array BigQuery$JobOption job-options)))))
 
-(defn- result->clj
-  [table-result]
-  (when-let [schema (.getSchema table-result)]
-    (let [cols (map (fn [f]
-                      {:col-type (.name (.getType f))
-                       :col-name (.getName f)})
-                    (.getFields schema))
-          rows (map (fn [row]
-                      (map #(.getValue %) row))
-                    (into [] (.iterateAll table-result)))]
-      (mapv (partial parse-row cols) rows))))
-
 (defn- error->map
   [bq-error]
   {:msg        (.getMessage bq-error)
@@ -200,7 +190,17 @@
    (query bq sql nil))
   ([bq sql params]
    (try
-     (result->clj (query-job bq sql params))
+     (let [res (query-job bq sql params)]
+       (if-let [schema (.getSchema res)]
+         (let [cols (map (fn [f]
+                           {:col-type (.name (.getType f))
+                            :col-name (.getName f)})
+                         (.getFields schema))
+               rows (map (fn [row]
+                           (map #(.getValue %) row))
+                         (into [] (.iterateAll res)))]
+           (mapv (partial parse-row cols) rows))
+         res))
      (catch BigQueryException bqe
        (if-let [errors (not-empty (.getErrors bqe))]
          (throw (ex-info "BigQueryErrors" {:errors (map error->map errors)}))
