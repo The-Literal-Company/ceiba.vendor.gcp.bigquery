@@ -1,6 +1,6 @@
 ```clojure
 {litco/ceiba.vendor.gcp.bigquery {:git/url "https://github.com/The-Literal-Company/ceiba.vendor.gcp.bigquery.git" 
-                                  :git/sha ""}}
+                                  :git/sha "3ee512bb22274186ef064100798fcaca4daf04f6"}}
 ```
 
 <hr>
