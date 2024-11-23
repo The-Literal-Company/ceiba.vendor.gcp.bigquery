@@ -16,7 +16,8 @@
   [{project-id :gcp/project}]
   ;https://cloud.google.com/java/docs/reference/google-cloud-bigquery/latest/com.google.cloud.bigquery.BigQueryOptions.Builder
   (let [options-builder (BigQueryOptions/newBuilder)]
-    (.setProjectId options-builder project-id)
+    (when project-id
+      (.setProjectId options-builder project-id))
     (.getService (.build options-builder))))
 
 (defn list-datasets [^BigQuery bq]

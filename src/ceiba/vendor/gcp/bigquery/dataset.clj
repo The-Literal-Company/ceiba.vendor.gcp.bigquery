@@ -43,7 +43,7 @@
     (.build constraints-builder)))
 
 (defn- spec->table
-  [{bq         ::client
+  [{bq         :ceiba.vendor.gcp.bigquery/client
     project-id :gcp/project
     dataset-id :dataset/id}
    {table-id    :table/id
@@ -83,7 +83,7 @@
     {:primary-keys (vec (.getColumns (.getPrimaryKey constraints)))}))
 
 (defn- spec-from-table-id
-  [{bq ::client
+  [{bq         :ceiba.vendor.gcp.bigquery/client
     dataset-id :dataset/id}
    table-id]
   (let [t (client/get-table bq dataset-id table-id)
@@ -125,7 +125,7 @@
    in these situations will always come back modified.
 
    Returns possibly updated table spec"
-  [{bq ::client
+  [{bq :ceiba.vendor.gcp.bigquery/client
     dataset-id :dataset/id}
    {table-id :table/id :as table-spec}]
   {:pre [(some? dataset-id) (some? table-id)]
@@ -254,7 +254,7 @@
    (sync-dataset-tables ctx {}))
   ([ctx labels]
    (sync-dataset-tables ctx labels any?))
-  ([{bq          ::client
+  ([{bq          :ceiba.vendor.gcp.bigquery/client
      dataset-id  :dataset/id
      table-specs :dataset/tables :as ctx}
     labels
@@ -305,13 +305,13 @@
 
 (defn sync
   "syncs complete dataset via dataset/tables and dataset/properties hasching"
-  [{bq            ::client
-    ignore-cache? ::ignore-cache?
+  [{bq            :ceiba.vendor.gcp.bigquery/client
+    ignore-cache? ::client/ignore-cache?
     project-id    :gcp/project
     location      :dataset/location
     dataset-id    :dataset/id
-    :as ctx}]
-  {:pre [(contains? ctx ::client)
+    :as           ctx}]
+  {:pre [(contains? ctx :ceiba.vendor.gcp.bigquery/client)
          (contains? ctx :gcp/project)
          (contains? ctx :dataset/id)
          (contains? ctx :dataset/location)]}
@@ -393,12 +393,12 @@
 
 (defn sync-tables
   "ignores properties, only syncs individual provided tables"
-  [{bq            ::client
-    ignore-cache? ::ignore-cache?
+  [{bq            :ceiba.vendor.gcp.bigquery/client
+    ignore-cache? :ceiba.vendor.gcp.bigquery/ignore-cache?
     project-id    :gcp/project
     location      :dataset/location
     dataset-id    :dataset/id :as ctx}]
-  {:pre [(contains? ctx ::client)
+  {:pre [(contains? ctx :ceiba.vendor.gcp.bigquery/client)
          (contains? ctx :gcp/project)
          (contains? ctx :dataset/location)
          (contains? ctx :dataset/id)]}
